@@ -424,34 +424,25 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 測試教材資料（暫時用這個）
+        // 教材資料（用户提供的真實內容）
         const sampleMaterials = [
-            // 113年 國一 南一
-            {id: 1, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'chinese', title: '現代詩文', content: '現代詩是指20世紀以後創作的詩歌...'},
-            {id: 2, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'chinese', title: '文言文閱讀', content: '文言文是中文書面語言的古典形式...'},
-            {id: 3, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '正負數', content: '正數大於0，負數小於0。零既不是正數也不是負數...'},
-            {id: 4, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '四則運算', content: '加法、減法、乘法、除法...'},
-            
-            // 113年 國一 康軒
-            {id: 5, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'chinese', title: '修辭手法', content: '修辭手法包括：譬喻、擬人、排比等...'},
-            {id: 6, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'english', title: 'Present Simple', content: 'The present simple tense is used for...'},
-            
-            // 113年 國一 翰林
-            {id: 7, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'english', title: 'Vocabulary - Food', content: 'Apple, banana, bread, chicken...'},
-            {id: 8, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'math', title: '因數與倍數', content: '因數是能整除該數的數，倍數是被整除的結果...'},
-            
-            // 114年 國二 南一
-            {id: 9, schoolYear: '114', grade: '8', version: 'nanyi', subject: 'math', title: '一元一次方程式', content: '形式：ax + b = c，其中 a ≠ 0...'},
-            {id: 10, schoolYear: '114', grade: '8', version: 'nanyi', subject: 'math', title: '平面圖形', content: '三角形、四邊形、圓形等基本圖形...'},
-            
-            // 115年 國三 翰林
-            {id: 11, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '二次方程式', content: '形式：ax² + bx + c = 0，其中 a ≠ 0...'},
-            {id: 12, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '相似與全等', content: '相似三角形的條件和性質...'},
-            {id: 13, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '三角比', content: 'sin, cos, tan 的定義和應用...'},
-            {id: 14, schoolYear: '115', grade: '9', version: 'kangxuan', subject: 'science', title: '力的測量', content: '重力、彈力、摩擦力的概念...'}
+            // 國一數學 - 第一章：整數的運算
+            {id: 1, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '第一章：整數的運算', chapter: '1', content: '正負數與絕對值：認識數線、相反數，以及代表點到原點距離的「絕對值」。整數的加減法：學習去括號法則與正負數相加減的邏輯。整數的乘除與四則運算：掌握「正正得正、負負得正、正負得負」的乘除法與先乘除後加減的運算順序。科學記號：學習指數的定義與指數律，並用科學記號（a × 10^n）表示極大或極小的數字。'},
+            {id: 2, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'math', title: '第一章：整數的運算', chapter: '1', content: '正負數與絕對值：認識數線、相反數，以及代表點到原點距離的「絕對值」。整數的加減法：學習去括號法則與正負數相加減的邏輯。整數的乘除與四則運算：掌握「正正得正、負負得正、正負得負」的乘除法與先乘除後加減的運算順序。科學記號：學習指數的定義與指數律，並用科學記號（a × 10^n）表示極大或極小的數字。'},
+            {id: 3, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'math', title: '第一章：整數的運算', chapter: '1', content: '正負數與絕對值：認識數線、相反數，以及代表點到原點距離的「絕對值」。整數的加減法：學習去括號法則與正負數相加減的邏輯。整數的乘除與四則運算：掌握「正正得正、負負得正、正負得負」的乘除法與先乘除後加減的運算順序。科學記號：學習指數的定義與指數律，並用科學記號（a × 10^n）表示極大或極小的數字。'},
+
+            // 國一數學 - 第二章：分數的運算
+            {id: 4, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '第二章：分數的運算', chapter: '2', content: '質因數分解與最大公因數、最小公倍數：學習質數與合數、短除法、標準分解式，並解決生活中的分組、分配與週期問題。分數的加減運算：將正負號導入分數，進行通分與加減。分數的乘除與四則運算：學習分數的乘除、倒數觀念、分數的指數律與正負分數的混合四則運算。'},
+            {id: 5, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'math', title: '第二章：分數的運算', chapter: '2', content: '質因數分解與最大公因數、最小公倍數：學習質數與合數、短除法、標準分解式，並解決生活中的分組、分配與週期問題。分數的加減運算：將正負號導入分數，進行通分與加減。分數的乘除與四則運算：學習分數的乘除、倒數觀念、分數的指數律與正負分數的混合四則運算。'},
+            {id: 6, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'math', title: '第二章：分數的運算', chapter: '2', content: '質因數分解與最大公因數、最小公倍數：學習質數與合數、短除法、標準分解式，並解決生活中的分組、分配與週期問題。分數的加減運算：將正負號導入分數，進行通分與加減。分數的乘除與四則運算：學習分數的乘除、倒數觀念、分數的指數律與正負分數的混合四則運算。'},
+
+            // 國一數學 - 第三章：一元一次方程式
+            {id: 7, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '第三章：一元一次方程式', chapter: '3', content: '代數式的化簡：學習用文字符號（如 x）代替數，並進行同類項合併（例如：3x + 2x = 5x）。一元一次方程式的解法：利用「等量公理」與「移項法則」求出未知數。應用問題：將生活情境（如：買賣賺賠、分配帳目、行程速度問題）轉譯為方程式並求解。'},
+            {id: 8, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'math', title: '第三章：一元一次方程式', chapter: '3', content: '代數式的化簡：學習用文字符號（如 x）代替數，並進行同類項合併（例如：3x + 2x = 5x）。一元一次方程式的解法：利用「等量公理」與「移項法則」求出未知數。應用問題：將生活情境（如：買賣賺賠、分配帳目、行程速度問題）轉譯為方程式並求解。'},
+            {id: 9, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'math', title: '第三章：一元一次方程式', chapter: '3', content: '代數式的化簡：學習用文字符號（如 x）代替數，並進行同類項合併（例如：3x + 2x = 5x）。一元一次方程式的解法：利用「等量公理」與「移項法則」求出未知數。應用問題：將生活情境（如：買賣賺賠、分配帳目、行程速度問題）轉譯為方程式並求解。'}
         ];
 
-        // 測試題目資料
+        // 測試題目資料（數學相關）
         const sampleQuizzes = [
             {
                 question: '正數的定義是什麼？',
@@ -460,13 +451,23 @@
             },
             {
                 question: '1 + 2 × 3 = ?',
-                options: ['7', '9', '6', '12'],
+                options: ['9', '7', '11', '5'],
                 correct: 0
             },
             {
-                question: '"修辭手法"最常用的是？',
-                options: ['譬喻', '擬人', '排比', '都可以'],
-                correct: 3
+                question: '|-5| 等於多少？',
+                options: ['5', '-5', '0', '不知道'],
+                correct: 0
+            },
+            {
+                question: '(-3) × (-4) = ?',
+                options: ['12', '-12', '7', '-1'],
+                correct: 0
+            },
+            {
+                question: '3x + 2x 化簡後等於？',
+                options: ['5x', '6x', 'x', '5x²'],
+                correct: 0
             }
         ];
 
