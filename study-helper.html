@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>讀書輔助小工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        select, input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .material-card {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .material-card:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .material-card h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .material-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .note-item {
+            background: #fffacd;
+            border-left: 4px solid #ffd700;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .note-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .quiz-question {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .quiz-question h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .quiz-option {
+            margin-bottom: 8px;
+        }
+
+        .quiz-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .quiz-option label {
+            display: inline;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .result-message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .result-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 讀書輔助小工具</h1>
+            <p>搜尋教材、記筆記、做測驗</p>
+        </header>
+
+        <div class="main-content">
+            <!-- 左邊：搜尋和選擇 -->
+            <div class="sidebar">
+                <h2>🔍 搜尋教材</h2>
+                
+                <div class="form-group">
+                    <label for="grade">年級：</label>
+                    <select id="grade">
+                        <option value="">選擇年級</option>
+                        <option value="7">國一</option>
+                        <option value="8">國二</option>
+                        <option value="9">國三</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">科目：</label>
+                    <select id="subject">
+                        <option value="">選擇科目</option>
+                        <option value="chinese">國文</option>
+                        <option value="english">英文</option>
+                        <option value="math">數學</option>
+                        <option value="science">自然</option>
+                        <option value="social">社會</option>
+                    </select>
+                </div>
+
+                <button onclick="searchMaterials()">搜尋</button>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+                <h2>📊 學習進度</h2>
+                <div class="stats" id="stats">
+                    <div class="stat-card">
+                        <h4>總筆記數</h4>
+                        <div class="number" id="noteCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>測驗次數</h4>
+                        <div class="number" id="quizCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右邊：主要內容 -->
+            <div class="content">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('materials')">教材</button>
+                    <button class="tab-btn" onclick="switchTab('notes')">筆記</button>
+                    <button class="tab-btn" onclick="switchTab('quiz')">測驗</button>
+                </div>
+
+                <!-- 教材 Tab -->
+                <div id="materials" class="tab-content active">
+                    <h2>教材列表</h2>
+                    <div id="materialsList" class="empty-state">
+                        <p>選擇年級和科目後按搜尋 👇</p>
+                    </div>
+                </div>
+
+                <!-- 筆記 Tab -->
+                <div id="notes" class="tab-content">
+                    <h2>新增筆記</h2>
+                    <div class="form-group">
+                        <label for="noteTitle">筆記標題：</label>
+                        <input type="text" id="noteTitle" placeholder="例如：第一章重點">
+                    </div>
+                    <div class="form-group">
+                        <label for="noteContent">筆記內容：</label>
+                        <textarea id="noteContent" placeholder="寫下你的筆記..."></textarea>
+                    </div>
+                    <button onclick="addNote()">💾 存筆記</button>
+
+                    <hr style="margin: 20px 0;">
+
+                    <h3>我的筆記</h3>
+                    <div id="notesList" class="empty-state">
+                        <p>還沒有筆記呢</p>
+                    </div>
+                </div>
+
+                <!-- 測驗 Tab -->
+                <div id="quiz" class="tab-content">
+                    <h2>練習測驗</h2>
+                    <div id="quizContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbQpIGMFJt1fU0um4eKae06S8VnrphHTU",
+            authDomain: "study-aecd4.firebaseapp.com",
+            projectId: "study-aecd4",
+            storageBucket: "study-aecd4.appspot.com",
+            messagingSenderId: "803664497994",
+            appId: "1:803664497994:web:3dfde8135fdd1e899905b3",
+            measurementId: "G-2WB150FKD3"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 測試教材資料（暫時用這個）
+        const sampleMaterials = {
+            '7_chinese': [
+                {id: 1, title: '現代詩文', content: '現代詩是指20世紀以後創作的詩歌...'},
+                {id: 2, title: '文言文閱讀', content: '文言文是中文書面語言的古典形式...'},
+                {id: 3, title: '修辭手法', content: '修辭手法包括：譬喻、擬人、排比等...'}
+            ],
+            '7_english': [
+                {id: 1, title: 'Present Simple', content: 'The present simple tense is used for...'},
+                {id: 2, title: 'Vocabulary - Food', content: 'Apple, banana, bread, chicken...'},
+                {id: 3, title: 'Grammar - Be Verb', content: 'I am, You are, He/She/It is...'}
+            ],
+            '7_math': [
+                {id: 1, title: '正負數', content: '正數大於0，負數小於0。零既不是正數也不是負數...'},
+                {id: 2, title: '四則運算', content: '加法、減法、乘法、除法...'},
+                {id: 3, title: '因數與倍數', content: '因數是能整除該數的數，倍數是被整除的結果...'}
+            ],
+            '8_math': [
+                {id: 1, title: '一元一次方程式', content: '形式：ax + b = c，其中 a ≠ 0...'},
+                {id: 2, title: '平面圖形', content: '三角形、四邊形、圓形等基本圖形...'},
+                {id: 3, title: '代數式', content: '用文字和數字表示的數學式子...'}
+            ],
+            '9_math': [
+                {id: 1, title: '二次方程式', content: '形式：ax² + bx + c = 0，其中 a ≠ 0...'},
+                {id: 2, title: '相似與全等', content: '相似三角形的條件和性質...'},
+                {id: 3, title: '三角比', content: 'sin, cos, tan 的定義和應用...'}
+            ]
+        };
+
+        // 測試題目資料
+        const sampleQuizzes = [
+            {
+                question: '正數的定義是什麼？',
+                options: ['大於0的數', '小於0的數', '等於0', '都不對'],
+                correct: 0
+            },
+            {
+                question: '1 + 2 × 3 = ?',
+                options: ['7', '9', '6', '12'],
+                correct: 0
+            },
+            {
+                question: '"修辭手法"最常用的是？',
+                options: ['譬喻', '擬人', '排比', '都可以'],
+                correct: 3
+            }
+        ];
+
+        let currentMaterials = [];
+        let currentNotes = [];
+        let currentQuizAnswers = {};
+
+        // 切換 Tab
+        function switchTab(tabName) {
+            // 隱藏所有 Tab
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 顯示選中的 Tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // 加載對應的內容
+            if (tabName === 'notes') {
+                loadNotes();
+            } else if (tabName === 'quiz') {
+                loadQuiz();
+            }
+        }
+
+        // 搜尋教材
+        function searchMaterials() {
+            const grade = document.getElementById('grade').value;
+            const subject = document.getElementById('subject').value;
+
+            if (!grade || !subject) {
+                alert('請選擇年級和科目');
+                return;
+            }
+
+            const key = `${grade}_${subject}`;
+            currentMaterials = sampleMaterials[key] || [];
+
+            displayMaterials();
+        }
+
+        // 顯示教材
+        function displayMaterials() {
+            const list = document.getElementById('materialsList');
+
+            if (currentMaterials.length === 0) {
+                list.innerHTML = '<p class="empty-state">找不到相關教材</p>';
+                return;
+            }
+
+            list.innerHTML = currentMaterials.map(material => `
+                <div class="material-card" onclick="selectMaterial(${material.id})">
+                    <h3>${material.title}</h3>
+                    <p>${material.content.substring(0, 80)}...</p>
+                </div>
+            `).join('');
+        }
+
+        // 選擇教材（可在此做更多事）
+        function selectMaterial(id) {
+            const material = currentMaterials.find(m => m.id === id);
+            alert(`✅ 已選擇：${material.title}\n\n${material.content}`);
+        }
+
+        // 新增筆記
+        async function addNote() {
+            const title = document.getElementById('noteTitle').value;
+            const content = document.getElementById('noteContent').value;
+
+            if (!title || !content) {
+                alert('請填入標題和內容');
+                return;
+            }
+
+            try {
+                await db.collection('notes').add({
+                    title: title,
+                    content: content,
+                    timestamp: new Date()
+                });
+
+                document.getElementById('noteTitle').value = '';
+                document.getElementById('noteContent').value = '';
+                
+                loadNotes();
+                updateStats();
+                alert('✅ 筆記已保存！');
+            } catch (error) {
+                console.error('Error adding note:', error);
+                alert('❌ 保存失敗');
+            }
+        }
+
+        // 加載筆記
+        async function loadNotes() {
+            try {
+                const snapshot = await db.collection('notes').orderBy('timestamp', 'desc').get();
+                const notesList = document.getElementById('notesList');
+
+                if (snapshot.empty) {
+                    notesList.innerHTML = '<p class="empty-state">還沒有筆記呢</p>';
+                    return;
+                }
+
+                currentNotes = [];
+                notesList.innerHTML = snapshot.docs.map(doc => {
+                    currentNotes.push({id: doc.id, ...doc.data()});
+                    return `
+                        <div class="note-item">
+                            <h4>${doc.data().title}</h4>
+                            <p>${doc.data().content}</p>
+                            <small style="color: #999;">
+                                ${new Date(doc.data().timestamp.toDate()).toLocaleString('zh-TW')}
+                            </small>
+                            <button class="delete-btn" onclick="deleteNote('${doc.id}')">刪除</button>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading notes:', error);
+            }
+        }
+
+        // 刪除筆記
+        async function deleteNote(id) {
+            if (!confirm('確定要刪除這筆筆記嗎？')) return;
+
+            try {
+                await db.collection('notes').doc(id).delete();
+                loadNotes();
+                updateStats();
+                alert('✅ 筆記已刪除');
+            } catch (error) {
+                console.error('Error deleting note:', error);
+                alert('❌ 刪除失敗');
+            }
+        }
+
+        // 加載測驗
+        function loadQuiz() {
+            const container = document.getElementById('quizContainer');
+            
+            container.innerHTML = `
+                ${sampleQuizzes.map((quiz, index) => `
+                    <div class="quiz-question">
+                        <h4>${index + 1}. ${quiz.question}</h4>
+                        ${quiz.options.map((option, optIndex) => `
+                            <div class="quiz-option">
+                                <input type="radio" id="q${index}o${optIndex}" 
+                                       name="question${index}" value="${optIndex}"
+                                       onchange="currentQuizAnswers[${index}] = ${optIndex}">
+                                <label for="q${index}o${optIndex}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('')}
+                <button onclick="submitQuiz()">📝 提交答案</button>
+            `;
+        }
+
+        // 提交測驗
+        async function submitQuiz() {
+            const answers = Object.values(currentQuizAnswers);
+            if (answers.length !== sampleQuizzes.length) {
+                alert('請回答所有問題');
+                return;
+            }
+
+            let correct = 0;
+            let feedback = '';
+
+            sampleQuizzes.forEach((quiz, index) => {
+                if (currentQuizAnswers[index] === quiz.correct) {
+                    correct++;
+                    feedback += `✅ 第 ${index + 1} 題正確\n`;
+                } else {
+                    feedback += `❌ 第 ${index + 1} 題錯誤（正確答案：${quiz.options[quiz.correct]}）\n`;
+                }
+            });
+
+            const score = Math.round((correct / sampleQuizzes.length) * 100);
+
+            // 保存測驗結果到 Firebase
+            try {
+                await db.collection('quiz_results').add({
+                    score: score,
+                    correctCount: correct,
+                    totalCount: sampleQuizzes.length,
+                    timestamp: new Date()
+                });
+
+                updateStats();
+            } catch (error) {
+                console.error('Error saving quiz result:', error);
+            }
+
+            alert(`測驗結果：${score}分\n${feedback}`);
+            currentQuizAnswers = {};
+            loadQuiz();
+        }
+
+        // 更新統計數據
+        async function updateStats() {
+            try {
+                const notesSnapshot = await db.collection('notes').get();
+                const quizSnapshot = await db.collection('quiz_results').get();
+
+                document.getElementById('noteCount').textContent = notesSnapshot.size;
+                document.getElementById('quizCount').textContent = quizSnapshot.size;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // 頁面加載時初始化
+        window.addEventListener('load', () => {
+            updateStats();
+        });
+    </script>
+</body>
+</html>
