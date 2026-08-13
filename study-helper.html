@@ -405,8 +405,8 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
     <script>
         // Firebase 設定
@@ -420,9 +420,13 @@
             measurementId: "G-2WB150FKD3"
         };
 
-        // 初始化 Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // 初始化 Firebase（延迟初始化以确保 SDK 已加载）
+        setTimeout(() => {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                window.db = firebase.firestore();
+            }
+        }, 100);
 
         // 教材資料（用户提供的真實內容）
         const sampleMaterials = [
@@ -563,8 +567,13 @@
                 return;
             }
 
+            if (!window.db) {
+                alert('Firebase 還在初始化中，請稍候...');
+                return;
+            }
+
             try {
-                await db.collection('notes').add({
+                await window.db.collection('notes').add({
                     title: title,
                     content: content,
                     timestamp: new Date()
@@ -584,8 +593,13 @@
 
         // 加載筆記
         async function loadNotes() {
+            if (!window.db) {
+                console.log('Firebase 未初始化');
+                return;
+            }
+
             try {
-                const snapshot = await db.collection('notes').orderBy('timestamp', 'desc').get();
+                const snapshot = await window.db.collection('notes').orderBy('timestamp', 'desc').get();
                 const notesList = document.getElementById('notesList');
 
                 if (snapshot.empty) {
@@ -616,8 +630,13 @@
         async function deleteNote(id) {
             if (!confirm('確定要刪除這筆筆記嗎？')) return;
 
+            if (!window.db) {
+                alert('Firebase 還在初始化中');
+                return;
+            }
+
             try {
-                await db.collection('notes').doc(id).delete();
+                await window.db.collection('notes').doc(id).delete();
                 loadNotes();
                 updateStats();
                 alert('✅ 筆記已刪除');
@@ -672,17 +691,19 @@
             const score = Math.round((correct / sampleQuizzes.length) * 100);
 
             // 保存測驗結果到 Firebase
-            try {
-                await db.collection('quiz_results').add({
-                    score: score,
-                    correctCount: correct,
-                    totalCount: sampleQuizzes.length,
-                    timestamp: new Date()
-                });
+            if (window.db) {
+                try {
+                    await window.db.collection('quiz_results').add({
+                        score: score,
+                        correctCount: correct,
+                        totalCount: sampleQuizzes.length,
+                        timestamp: new Date()
+                    });
 
-                updateStats();
-            } catch (error) {
-                console.error('Error saving quiz result:', error);
+                    updateStats();
+                } catch (error) {
+                    console.error('Error saving quiz result:', error);
+                }
             }
 
             alert(`測驗結果：${score}分\n${feedback}`);
@@ -692,9 +713,14 @@
 
         // 更新統計數據
         async function updateStats() {
+            if (!window.db) {
+                console.log('Firebase 未初始化');
+                return;
+            }
+
             try {
-                const notesSnapshot = await db.collection('notes').get();
-                const quizSnapshot = await db.collection('quiz_results').get();
+                const notesSnapshot = await window.db.collection('notes').get();
+                const quizSnapshot = await window.db.collection('quiz_results').get();
 
                 document.getElementById('noteCount').textContent = notesSnapshot.size;
                 document.getElementById('quizCount').textContent = quizSnapshot.size;
