@@ -300,12 +300,32 @@
                 <h2>🔍 搜尋教材</h2>
                 
                 <div class="form-group">
+                    <label for="schoolYear">學年度：</label>
+                    <select id="schoolYear">
+                        <option value="">選擇學年度</option>
+                        <option value="113">113年</option>
+                        <option value="114">114年</option>
+                        <option value="115">115年</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="grade">年級：</label>
                     <select id="grade">
                         <option value="">選擇年級</option>
                         <option value="7">國一</option>
                         <option value="8">國二</option>
                         <option value="9">國三</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="version">版本：</label>
+                    <select id="version">
+                        <option value="">選擇版本</option>
+                        <option value="nanyi">南一</option>
+                        <option value="kangxuan">康軒</option>
+                        <option value="hanlin">翰林</option>
                     </select>
                 </div>
 
@@ -405,33 +425,31 @@
         const db = firebase.firestore();
 
         // 測試教材資料（暫時用這個）
-        const sampleMaterials = {
-            '7_chinese': [
-                {id: 1, title: '現代詩文', content: '現代詩是指20世紀以後創作的詩歌...'},
-                {id: 2, title: '文言文閱讀', content: '文言文是中文書面語言的古典形式...'},
-                {id: 3, title: '修辭手法', content: '修辭手法包括：譬喻、擬人、排比等...'}
-            ],
-            '7_english': [
-                {id: 1, title: 'Present Simple', content: 'The present simple tense is used for...'},
-                {id: 2, title: 'Vocabulary - Food', content: 'Apple, banana, bread, chicken...'},
-                {id: 3, title: 'Grammar - Be Verb', content: 'I am, You are, He/She/It is...'}
-            ],
-            '7_math': [
-                {id: 1, title: '正負數', content: '正數大於0，負數小於0。零既不是正數也不是負數...'},
-                {id: 2, title: '四則運算', content: '加法、減法、乘法、除法...'},
-                {id: 3, title: '因數與倍數', content: '因數是能整除該數的數，倍數是被整除的結果...'}
-            ],
-            '8_math': [
-                {id: 1, title: '一元一次方程式', content: '形式：ax + b = c，其中 a ≠ 0...'},
-                {id: 2, title: '平面圖形', content: '三角形、四邊形、圓形等基本圖形...'},
-                {id: 3, title: '代數式', content: '用文字和數字表示的數學式子...'}
-            ],
-            '9_math': [
-                {id: 1, title: '二次方程式', content: '形式：ax² + bx + c = 0，其中 a ≠ 0...'},
-                {id: 2, title: '相似與全等', content: '相似三角形的條件和性質...'},
-                {id: 3, title: '三角比', content: 'sin, cos, tan 的定義和應用...'}
-            ]
-        };
+        const sampleMaterials = [
+            // 113年 國一 南一
+            {id: 1, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'chinese', title: '現代詩文', content: '現代詩是指20世紀以後創作的詩歌...'},
+            {id: 2, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'chinese', title: '文言文閱讀', content: '文言文是中文書面語言的古典形式...'},
+            {id: 3, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '正負數', content: '正數大於0，負數小於0。零既不是正數也不是負數...'},
+            {id: 4, schoolYear: '113', grade: '7', version: 'nanyi', subject: 'math', title: '四則運算', content: '加法、減法、乘法、除法...'},
+            
+            // 113年 國一 康軒
+            {id: 5, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'chinese', title: '修辭手法', content: '修辭手法包括：譬喻、擬人、排比等...'},
+            {id: 6, schoolYear: '113', grade: '7', version: 'kangxuan', subject: 'english', title: 'Present Simple', content: 'The present simple tense is used for...'},
+            
+            // 113年 國一 翰林
+            {id: 7, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'english', title: 'Vocabulary - Food', content: 'Apple, banana, bread, chicken...'},
+            {id: 8, schoolYear: '113', grade: '7', version: 'hanlin', subject: 'math', title: '因數與倍數', content: '因數是能整除該數的數，倍數是被整除的結果...'},
+            
+            // 114年 國二 南一
+            {id: 9, schoolYear: '114', grade: '8', version: 'nanyi', subject: 'math', title: '一元一次方程式', content: '形式：ax + b = c，其中 a ≠ 0...'},
+            {id: 10, schoolYear: '114', grade: '8', version: 'nanyi', subject: 'math', title: '平面圖形', content: '三角形、四邊形、圓形等基本圖形...'},
+            
+            // 115年 國三 翰林
+            {id: 11, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '二次方程式', content: '形式：ax² + bx + c = 0，其中 a ≠ 0...'},
+            {id: 12, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '相似與全等', content: '相似三角形的條件和性質...'},
+            {id: 13, schoolYear: '115', grade: '9', version: 'hanlin', subject: 'math', title: '三角比', content: 'sin, cos, tan 的定義和應用...'},
+            {id: 14, schoolYear: '115', grade: '9', version: 'kangxuan', subject: 'science', title: '力的測量', content: '重力、彈力、摩擦力的概念...'}
+        ];
 
         // 測試題目資料
         const sampleQuizzes = [
@@ -480,16 +498,24 @@
 
         // 搜尋教材
         function searchMaterials() {
+            const schoolYear = document.getElementById('schoolYear').value;
             const grade = document.getElementById('grade').value;
+            const version = document.getElementById('version').value;
             const subject = document.getElementById('subject').value;
 
             if (!grade || !subject) {
-                alert('請選擇年級和科目');
+                alert('請至少選擇年級和科目');
                 return;
             }
 
-            const key = `${grade}_${subject}`;
-            currentMaterials = sampleMaterials[key] || [];
+            // 過濾教材
+            currentMaterials = sampleMaterials.filter(material => {
+                if (material.grade !== grade) return false;
+                if (material.subject !== subject) return false;
+                if (schoolYear && material.schoolYear !== schoolYear) return false;
+                if (version && material.version !== version) return false;
+                return true;
+            });
 
             displayMaterials();
         }
@@ -503,9 +529,18 @@
                 return;
             }
 
+            const versionMap = {
+                'nanyi': '南一',
+                'kangxuan': '康軒',
+                'hanlin': '翰林'
+            };
+
             list.innerHTML = currentMaterials.map(material => `
                 <div class="material-card" onclick="selectMaterial(${material.id})">
                     <h3>${material.title}</h3>
+                    <small style="color: #999;">
+                        ${material.schoolYear}年 | ${versionMap[material.version]}版
+                    </small>
                     <p>${material.content.substring(0, 80)}...</p>
                 </div>
             `).join('');
