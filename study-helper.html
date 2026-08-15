@@ -300,16 +300,6 @@
                 <h2>🔍 搜尋教材</h2>
                 
                 <div class="form-group">
-                    <label for="schoolYear">學年度：</label>
-                    <select id="schoolYear">
-                        <option value="">選擇學年度</option>
-                        <option value="113">113年</option>
-                        <option value="114">114年</option>
-                        <option value="115">115年</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
                     <label for="grade">年級：</label>
                     <select id="grade">
                         <option value="">選擇年級</option>
@@ -428,18 +418,248 @@
             }
         }, 100);
 
-        // 教材資料（詳細版本）
-        const sampleMaterials = [
-            // 國一數學 - 第一章：整數的運算
+        // 教材資料（詳細版本 - 分頁）
+        const allMaterials = [
+            // 國一數學 - 第一章
             {
                 id: 1, 
-                schoolYear: '113', 
                 grade: '7', 
                 version: 'nanyi', 
                 subject: 'math', 
-                title: '第一章：整數的運算', 
-                chapter: '1', 
-                content: `1-1 正負數與數線
+                chapter: '1',
+                section: '1-1',
+                title: '1-1 正負數與數線', 
+                content: `① 什麼是正數、負數？
+生活中有很多東西可以用「方向」表示。
+例如：賺 100 元 → +100，花掉 100 元 → -100
+所以：正數通常表示「往正方向」，負數通常表示「往負方向」。
+而 0 不屬於正數，也不屬於負數。
+
+② 數線
+←─── -3 ── -2 ── -1 ── 0 ── 1 ── 2 ── 3 ───→
+越往右，數越大。越往左，數越小。
+3 > 1，-1 > -3
+
+③ 相反數
+如果兩個數：距離 0 一樣遠、方向相反，它們就是相反數。
+例如：+5 和 -5，+8 和 -8`
+            },
+            {
+                id: 2, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-2',
+                title: '1-2 絕對值', 
+                content: `絕對值就是一個數到 0 的距離。
+|3| = 3，|-3| = 3
+絕對值不會是負數。
+
+小例子
+|7| = ?
+答案是 7
+
+|-7| = ?
+答案也是 7
+
+練習：求 |-12| = ?`
+            },
+            {
+                id: 3, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-3',
+                title: '1-3 整數的加法', 
+                content: `最簡單的方法之一，是把它想成數線上的移動。
+
+同號相加
+例如：3 + 2
+從 3 往右走 2 格：3 → 4 → 5
+所以：3 + 2 = 5
+
+負數＋負數
+例如：-3 + (-2)
+從 -3 往左走 2 格：-3 → -4 → -5
+所以：-3 + (-2) = -5
+
+同號相加規則：數字相加，符號不變。
+(+4) + (+3) = +7
+(-4) + (-3) = -7
+
+正數＋負數
+例如：5 + (-3) = 2
+例如：3 + (-7) = -4
+
+不同號相加規則：大的數減小的數，再看誰的「量」比較大。`
+            },
+            {
+                id: 4, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-4',
+                title: '1-4 整數的減法', 
+                content: `減法有一個非常重要的想法：
+減掉一個數 = 加上它的相反數
+
+例如：
+5 - 3 = 5 + (-3) = 2
+
+再看：
+5 - (-3) = 5 + 3 = 8
+
+減負數會變成加正數。
+
+練習
+算：7 - (-4)
+第一步應該變成什麼？
+7 + 4 或 7 - 4`
+            },
+            {
+                id: 5, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-5',
+                title: '1-5 去括號', 
+                content: `這是國一很常考的地方。
+
+例如：
++(3 - 5)
+前面的 + 不會改變括號裡面的符號：
++3 - 5
+
+但是：
+-(3 - 5)
+前面是負號。
+括號裡面的符號會全部改變：
+-3 + 5
+
+規則：
+前面是 +：符號基本上不變。
+前面是 -：括號裡面的 +、- 全部反過來。
+
+例如：
+-(5 + 2 - 3) = -5 - 2 + 3`
+            },
+            {
+                id: 6, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-6',
+                title: '1-6 整數的乘法', 
+                content: `非常重要的規則：
+
+第一個數 | 第二個數 | 結果
+--------|--------|------
+   +    |   +    |  +
+   -    |   -    |  +
+   +    |   -    |  -
+   -    |   +    |  -
+
+也就是：同號得正，異號得負。
+
+例如：
+3 × 4 = 12
+(-3) × (-4) = 12
+3 × (-4) = -12
+(-3) × 4 = -12
+
+為什麼負 × 負會變正？
+觀察規律：
+3 × (-2) = -6
+2 × (-2) = -4
+1 × (-2) = -2
+0 × (-2) = 0
+(-1) × (-2) = 2
+
+結果繼續按照規律增加 2，所以負負得正。`
+            },
+            {
+                id: 7, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-7',
+                title: '1-7 整數的除法', 
+                content: `除法的正負號規則跟乘法一樣：
+同號得正，異號得負。
+
+例如：
+12 ÷ 3 = 4
+(-12) ÷ (-3) = 4
+12 ÷ (-3) = -4
+(-12) ÷ 3 = -4
+
+記住：只要符號相同，結果就是正。符號不同，結果就是負。`
+            },
+            {
+                id: 8, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-8',
+                title: '1-8 四則運算', 
+                content: `當一道題目同時有加減乘除時，不能從左邊一路算到底。
+
+運算順序：
+先乘除，再加減。
+
+例如：
+3 + 2 × 4
+先算：2 × 4 = 8
+再算：3 + 8 = 11
+所以：3 + 2 × 4 = 11（不是 20）
+
+如果有括號
+先算括號。
+
+例如：
+(3 + 2) × 4
+先：3 + 2 = 5
+再：5 × 4 = 20`
+            },
+            {
+                id: 9, 
+                grade: '7', 
+                version: 'nanyi', 
+                subject: 'math', 
+                chapter: '1',
+                section: '1-9',
+                title: '1-9 科學記號', 
+                content: `有些數字非常大或非常小，寫很多 0 很麻煩。
+
+基本形式：a × 10ⁿ
+其中通常會讓：1 ≤ a < 10
+
+大數的例子
+300000000
+把小數點往左移 8 格：3 × 10⁸
+
+很小的數
+0.000003
+小數點往右移 6 格才變成 3。
+所以：0.000003 = 3 × 10⁻⁶
+
+規則：
+大數 → 指數通常是正的
+小於 1 的小數 → 指數通常是負的`
+            }
+        ];
+
+        // 為了相容舊代碼，創建 sampleMaterials
+        const sampleMaterials = allMaterials.map(m => ({
+            ...m,
+            schoolYear: '113'
 ① 什麼是正數、負數？
 生活中有很多東西可以用「方向」表示。
 例如：賺 100 元 → +100，花掉 100 元 → -100
@@ -1011,9 +1231,10 @@ x² + 2x = 5 不是（有 x²，是二次）
             }
         }
 
+        let currentPageIndex = 0;
+
         // 搜尋教材
         function searchMaterials() {
-            const schoolYear = document.getElementById('schoolYear').value;
             const grade = document.getElementById('grade').value;
             const version = document.getElementById('version').value;
             const subject = document.getElementById('subject').value;
@@ -1027,16 +1248,21 @@ x² + 2x = 5 不是（有 x²，是二次）
             currentMaterials = sampleMaterials.filter(material => {
                 if (material.grade !== grade) return false;
                 if (material.subject !== subject) return false;
-                if (schoolYear && material.schoolYear !== schoolYear) return false;
                 if (version && material.version !== version) return false;
                 return true;
             });
 
-            displayMaterials();
+            if (currentMaterials.length === 0) {
+                document.getElementById('materialsList').innerHTML = '<p class="empty-state">找不到相關教材</p>';
+                return;
+            }
+
+            currentPageIndex = 0;
+            displayMaterialsPage();
         }
 
-        // 顯示教材
-        function displayMaterials() {
+        // 顯示分頁教材
+        function displayMaterialsPage() {
             const list = document.getElementById('materialsList');
 
             if (currentMaterials.length === 0) {
@@ -1050,15 +1276,58 @@ x² + 2x = 5 不是（有 x²，是二次）
                 'hanlin': '翰林'
             };
 
-            list.innerHTML = currentMaterials.map(material => `
-                <div class="material-card" onclick="selectMaterial(${material.id})">
-                    <h3>${material.title}</h3>
-                    <small style="color: #999;">
-                        ${material.schoolYear}年 | ${versionMap[material.version]}版
-                    </small>
-                    <p>${material.content.substring(0, 80)}...</p>
+            const material = currentMaterials[currentPageIndex];
+            const totalPages = currentMaterials.length;
+            const pageNum = currentPageIndex + 1;
+
+            list.innerHTML = `
+                <div style="border-left: 4px solid #667eea; padding: 20px; background: #f9f9f9; border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="color: #667eea; margin: 0;">${material.title}</h3>
+                        <small style="color: #999;">${versionMap[material.version]}版</small>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; line-height: 1.8; white-space: pre-wrap;">
+                        ${material.content}
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <button 
+                            onclick="previousPage()" 
+                            style="padding: 8px 15px; background: #ccc; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;" 
+                            ${currentPageIndex === 0 ? 'disabled style="opacity: 0.5;"' : ''}
+                        >
+                            ← 上一頁
+                        </button>
+                        
+                        <span style="font-weight: 600; color: #667eea;">第 ${pageNum} / ${totalPages} 頁</span>
+                        
+                        <button 
+                            onclick="nextPage()" 
+                            style="padding: 8px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;" 
+                            ${currentPageIndex === totalPages - 1 ? 'disabled style="opacity: 0.5;"' : ''}
+                        >
+                            下一頁 →
+                        </button>
+                    </div>
                 </div>
-            `).join('');
+            `;
+        }
+
+        // 上一頁
+        function previousPage() {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                displayMaterialsPage();
+            }
+        }
+
+        // 下一頁
+        function nextPage() {
+            if (currentPageIndex < currentMaterials.length - 1) {
+                currentPageIndex++;
+                displayMaterialsPage();
+            }
         }
 
         // 選擇教材（可在此做更多事）
